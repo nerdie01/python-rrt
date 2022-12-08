@@ -2,13 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import math
-import copy
-
-def generateGrid(filename='rooms.png'):
-    map = plt.imread(filename)
-    map = np.mean(map, axis=2)
-    map = np.where(map < 0.5, 0, 1)
-    return map
 
 class Node:
     def __init__(self, x, y):
@@ -18,6 +11,12 @@ class Node:
 
     def __repr__(self):
         return str((self.x, self.y))
+
+def generateGrid(filename='rooms.png'):
+    map = plt.imread(filename)
+    map = np.mean(map, axis=2)
+    map = np.where(map < 0.5, 0, 1)
+    return map
 
 def distance(n1, n2):
     return np.sqrt((n1.x - n2.x)**2 + (n1.y - n2.y)**2)
@@ -64,18 +63,3 @@ def generate_obstacle_list(grid):
             if grid[i, j] == 0:
                 obstacleList.append((i, j, 1))
     return obstacleList
-
-grid = generateGrid('rooms.png')
-obstacleList = generate_obstacle_list(grid)
-
-nodes = [Node(0, 0)]
-for i in range(1000):
-    rnd = generate_random_node(grid)
-    nind = get_nearest_node(nodes, rnd)
-    newNode = steer(nind, rnd)
-    if check_collision(newNode, obstacleList):
-        nodes.append(newNode)
-
-path = generate_path(nodes[-1])
-path.reverse()
-path = np.array(path)
